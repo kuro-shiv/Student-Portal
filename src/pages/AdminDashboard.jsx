@@ -305,6 +305,7 @@ export default function AdminDashboard() {
                   <div><strong>Name:</strong> {selectedStudent.name}</div>
                   <div><strong>Username:</strong> {selectedStudent.username}</div>
                   <div><strong>Email:</strong> {selectedStudent.email}</div>
+                  <div><strong>Password:</strong> <code>{selectedStudent.password || 'N/A'}</code></div>
                   <div><strong>Roll ID:</strong> {selectedStudent.rollId}</div>
                   <div><strong>Student ID:</strong> {selectedStudent.studentId}</div>
                   <div><strong>Status:</strong> {selectedStudent.locked ? 'Locked' : 'Active'}</div>
