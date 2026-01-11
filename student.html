@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Student Demo</title>
+  <style>body{background:#0f1115;color:#ddd;font-family:sans-serif;padding:20px} input,button,textarea{background:#111218;color:#ddd;border:1px solid #222;padding:8px;margin:6px 0;width:100%} .box{max-width:720px;margin:auto}</style>
+</head>
+<body>
+  <div class="box">
+    <h2>Student Login (demo)</h2>
+    <input id="userId" placeholder="userId" />
+    <input id="password" placeholder="password" type="password" />
+    <button onclick="login()">Login</button>
+    <pre id="out"></pre>
+
+    <h3>Your Courses</h3>
+    <button onclick="loadCourses()">Load Courses</button>
+    <pre id="courses"></pre>
+
+    <h3>Get Course Modules</h3>
+    <input id="courseId" placeholder="courseId" />
+    <button onclick="getModules()">Get Modules</button>
+    <pre id="modules"></pre>
+
+    <h3>Submit Project Link</h3>
+    <input id="submitCourseId" placeholder="courseId" />
+    <input id="submitModuleOrder" placeholder="module order" />
+    <input id="submitLink" placeholder="submission link (GitHub/Drive)" />
+    <button onclick="submitLink()">Submit</button>
+  </div>
+
+  <script>
+    let token = null;
+    function show(msg){document.getElementById('out').textContent = JSON.stringify(msg, null, 2)}
+    async function login(){
+      const res = await fetch('/api/auth/login', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({userId:document.getElementById('userId').value,password:document.getElementById('password').value})});
+      const j = await res.json();
+      if (j.token) token = j.token;
+      show(j);
+    }
+    async function loadCourses(){
+      const res = await fetch('/api/student/courses', {headers:{'authorization':'Bearer '+token}});
+      document.getElementById('courses').textContent = JSON.stringify(await res.json(), null, 2);
+    }
+    async function getModules(){
+      const courseId = document.getElementById('courseId').value;
+      const res = await fetch('/api/student/course/'+courseId+'/modules', {headers:{'authorization':'Bearer '+token}});
+      document.getElementById('modules').textContent = JSON.stringify(await res.json(), null, 2);
+    }
+    async function submitLink(){
+      const c = document.getElementById('submitCourseId').value;
+      const o = document.getElementById('submitModuleOrder').value;
+      const link = document.getElementById('submitLink').value;
+      const res = await fetch('/api/student/course/'+c+'/module/'+o+'/submit', {method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+token},body:JSON.stringify({link})});
+      show(await res.json());
+    }
+  </script>
+</body>
+</html>

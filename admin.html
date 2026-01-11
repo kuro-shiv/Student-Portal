@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin Demo</title>
+  <style>body{background:#0f1115;color:#ddd;font-family:sans-serif;padding:20px} input,button,textarea{background:#111218;color:#ddd;border:1px solid #222;padding:8px;margin:6px 0;width:100%} .box{max-width:720px;margin:auto}</style>
+</head>
+<body>
+  <div class="box">
+    <h2>Admin Login (demo)</h2>
+    <input id="username" placeholder="username" />
+    <input id="password" placeholder="password" type="password" />
+    <button onclick="login()">Login</button>
+    <pre id="out"></pre>
+
+    <h3>Create Student</h3>
+    <input id="newUserId" placeholder="userId (optional)" />
+    <input id="newName" placeholder="name" />
+    <input id="newEmail" placeholder="email" />
+    <input id="newPass" placeholder="password" />
+    <button onclick="createStudent()">Create Student</button>
+
+    <h3>Assign Course (course must exist)</h3>
+    <input id="assignUserId" placeholder="student userId" />
+    <input id="assignCourseId" placeholder="courseId" />
+    <button onclick="assignCourse()">Assign</button>
+
+    <h3>View Submissions</h3>
+    <button onclick="viewSubs()">Load</button>
+    <pre id="subs"></pre>
+  </div>
+
+  <script>
+    let token = null;
+    function show(msg){document.getElementById('out').textContent = JSON.stringify(msg, null, 2)}
+    async function login(){
+      const res = await fetch('/api/auth/login', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({username:document.getElementById('username').value,password:document.getElementById('password').value})});
+      const j = await res.json();
+      if (j.token) token = j.token;
+      show(j);
+    }
+    async function createStudent(){
+      const body = { userId: document.getElementById('newUserId').value || undefined, name: document.getElementById('newName').value, email: document.getElementById('newEmail').value, password: document.getElementById('newPass').value };
+      const res = await fetch('/api/admin/students', {method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+token},body:JSON.stringify(body)});
+      show(await res.json());
+    }
+    async function assignCourse(){
+      const body = { courseId: document.getElementById('assignCourseId').value };
+      const res = await fetch('/api/admin/students/'+document.getElementById('assignUserId').value+'/assign', {method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+token},body:JSON.stringify(body)});
+      show(await res.json());
+    }
+    async function viewSubs(){
+      const res = await fetch('/api/admin/submissions', {headers:{'authorization':'Bearer '+token}});
+      const j = await res.json();
+      document.getElementById('subs').textContent = JSON.stringify(j, null, 2);
+    }
+  </script>
+</body>
+</html>
