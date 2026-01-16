@@ -2,7 +2,7 @@ import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import AdminDashboard from './pages/AdminDashboard'
-import StudentDashboard from './pages/StudentDashboard'
+import StudentDashboard from './pages/StudentDashboard.jsx'
 
 const getRole = () => localStorage.getItem('role')
 
