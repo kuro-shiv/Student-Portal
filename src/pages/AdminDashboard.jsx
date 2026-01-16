@@ -40,7 +40,7 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
       const [studentsRes, coursesRes, submissionsRes] = await Promise.all([
-        api.get('/api/students'),
+        api.get('/api/admin/students'),
         api.get('/api/courses'),
         api.get('/api/submissions')
       ]);
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await api.post('/api/students', newStudent);
+      const res = await api.post('/api/admin/students', newStudent);
       setMsg({ type: 'success', text: `Student created: ${res.data.student.rollId}` });
       setNewStudent({ username: '', name: '', email: '', password: '', assignedCourses: [] });
       loadDashboard();
@@ -79,7 +79,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Are you sure you want to delete this student?')) return;
     try {
       setLoading(true);
-      await api.delete(`/api/students/${studentId}`);
+      await api.delete(`/api/admin/students/${studentId}`);
       setMsg({ type: 'success', text: 'Student deleted' });
       loadDashboard();
     } catch (err) {
